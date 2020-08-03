@@ -13,9 +13,6 @@ from math import *
 import user_interface # import user interface module
 import statistics #imports so that mean() can be used 
 
-# Please insert your defined functions here
-
-
 # initialize subscribers list and music_genre list
 subscribers = [
 			'Justin Trudeau',
@@ -139,20 +136,18 @@ the user interface module. This calculates the similarity value between the two 
 calculations outlined in the assignment
 '''
 def genre_similarity(ratings, custName1, custName2):
-	sub1sum = 0
+	sub1sum = 0 #variables used to sum all genre ratings
 	sub2sum = 0
-	intersection_sum = 0
-	store_user1= {}
-	store_user2 = {}
-	store_user1 = ratings[custName1] 
+	intersection_sum = 0 #used to find the numerator of final equation
+	store_user1 = ratings[custName1]#stores subscribers genres so that they can be compared
 	store_user2 = ratings[custName2]
 	for genre in ratings[custName1]:
-		sub1sum+=ratings[custName1][genre]
+		sub1sum+=ratings[custName1][genre] #calculates the sum of all genre ratings for subscriber 1
 	for genre in ratings[custName2]:
-		sub2sum+=ratings[custName2][genre]				
+		sub2sum+=ratings[custName2][genre] #calculates the sum of all genre ratings for subscriber 2				
 	for genre1 in store_user1:
 		for genre2 in store_user2:
-			if genre1 == genre2:
+			if genre1 == genre2: #takes the minimum value for genres that are shared
 				genre_value = min(ratings[custName1][genre1], ratings[custName2][genre2])
 				intersection_sum +=genre_value
 	similarity_value = min((intersection_sum/sub1sum), (intersection_sum/sub2sum))
@@ -228,20 +223,20 @@ def recommend_genre(subscriber_ratings, name, test = None):
 	recommended_list_values = []
 	most_similar = match_subscribers(subscriber_ratings, name)
 	#checks to make sure subscribers are not the exact same because it would not be able to suggest genres
-	if most_similar['Similarityval'] == 1:
+	if most_similar['Similarityval'] == 1: #condition ensures that users do not have the exact same ratings (and are not the same user)
 		subscriber_ratings.pop(most_similar['Name'])
 		return recommend_genre(subscriber_ratings, name, test)
 	if most_similar['Similarityval'] < 1:
 		for genre in subscriber_ratings[most_similar['Name']]:
-			if genre not in subscriber_ratings[name]:
+			if genre not in subscriber_ratings[name]: #finds genres that most_similar rates and subscriber does not
 				recommended_list_values.append(subscriber_ratings[most_similar['Name']][genre])
 				recommended_list.append(genre)
-		if recommended_list_values == []:
+		if recommended_list_values == []: #condition for if most similar user and subscriber have the same genres but different ratings
 			subscriber_ratings.pop(most_similar['Name'])
 			return recommend_genre(subscriber_ratings, name, test)
 		else:
 			max_value = max(recommended_list_values)
-			index = recommended_list_values.index(max_value)
+			index = recommended_list_values.index(max_value) #uses the index value from values list to find genre in genre list
 			if test == None:#test parameter prints when not active and returns when active
 				print("Comparing your listening to others, we recommend you listen to", recommended_list[index])
 			else:
