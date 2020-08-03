@@ -142,19 +142,20 @@ def genre_similarity(ratings, custName1, custName2):
 	sub1sum = 0
 	sub2sum = 0
 	intersection_sum = 0
-	for subscriber in ratings:
-		if subscriber.lower() == custName1.lower():#checks input in lowercase to stop case sensitivity
-			sub_1_ratings = ratings[subscriber]
-	for subscriber in ratings:
-		if subscriber.lower() == custName2.lower():#checks input in lowercase to stop case sensitivity
-			sub_2_ratings = ratings[subscriber]
-	for genre_1 in sub_1_ratings: #calculates similarity value based on formula outlined in assignment
-		sub1sum += sub_1_ratings[genre_1]
-		for genre_2 in sub_2_ratings:
-			sub2sum += sub_2_ratings[genre_2]
-			if genre_1 == genre_2:
-				intersection_sum += min(sub_1_ratings[genre_1], sub_2_ratings[genre_2])
-	similarity_value = min(intersection_sum/sub1sum, intersection_sum/sub1sum)
+	store_user1= {}
+	store_user2 = {}
+	store_user1 = ratings[custName1] 
+	store_user2 = ratings[custName2]
+	for genre in ratings[custName1]:
+		sub1sum+=ratings[custName1][genre]
+	for genre in ratings[custName2]:
+		sub2sum+=ratings[custName2][genre]				
+	for genre1 in store_user1:
+		for genre2 in store_user2:
+			if genre1 == genre2:
+				genre_value = min(ratings[custName1][genre1], ratings[custName2][genre2])
+				intersection_sum +=genre_value
+	similarity_value = min((intersection_sum/sub1sum), (intersection_sum/sub2sum))
 	return similarity_value
 	
 '''
@@ -165,7 +166,7 @@ the values calculated in genre_similarity
 def match_subscribers(subscriber_ratings, custName):
 	similarity_info = [] #stores a users 
 	for subscriber in subscriber_ratings:
-		# if condition ensure that the inputted name is not returned as the most similar user
+		# if condition ensures that the inputted name is not returned as the most similar user
 		if subscriber.lower() == custName.lower():
 			pass #ensures that the matched subscriber is not same as the inputted subscriber
 		else:
@@ -235,12 +236,16 @@ def recommend_genre(subscriber_ratings, name, test = None):
 			if genre not in subscriber_ratings[name]:
 				recommended_list_values.append(subscriber_ratings[most_similar['Name']][genre])
 				recommended_list.append(genre)
-	max_value = max(recommended_list_values)
-	index = recommended_list_values.index(max_value)
-	if test == None:#test parameter prints when not active and returns when active
-		print("Comparing your listening to others, we recommend you listen to", recommended_list[index])
-	else:
-		return recommended_list[index]
+		if recommended_list_values == []:
+			subscriber_ratings.pop(most_similar['Name'])
+			return recommend_genre(subscriber_ratings, name, test)
+		else:
+			max_value = max(recommended_list_values)
+			index = recommended_list_values.index(max_value)
+			if test == None:#test parameter prints when not active and returns when active
+				print("Comparing your listening to others, we recommend you listen to", recommended_list[index])
+			else:
+				return recommended_list[index]
 
 '''
 Given a customer name and the nested dictionary, this function checks that a subscriber by
@@ -274,8 +279,8 @@ def unit_test():
 	test_name_error = ['daJNJDnkjn', '123456', 'qmskqmksmq']
 	test_name_accept_1 = ['JUSTIN TRUDEAU', 'jUsTiN tRuDeAu']
 	test_name_accept_2 = ['Justin Trudeau', 'Captain Nemo', 'Joe Jameson', 'Noella Nash', 'Tim Horton'] # inputs are cleaned because checkName function finds correct format
-	result_similarity = ['~0.3235', '~0.4259', '~0.2769', '~0.3333', '~0.5600']
-	results_match = ['Bob Jones', 'Anton Autin', 'Alix Ashmore', 'Anton Autin', 'Anton Autin']
+	result_similarity = ['~0.3235', '~0.3538', '~0.2769', '~0.2200', '~0.4118']
+	results_match = ['Bob Jones', 'Anton Autin', 'Peter Rabbit', 'Roger Rudd', 'Anton Autin']
 	print("Running Unit Testing")
 	print("\nTesting Menu...")
 	print("For input", 1, "Should return 'Please enter the name of the first customer you would like to compare.'", user_interface.commandPrompt(subscriberRatings, 1))
@@ -285,8 +290,6 @@ def unit_test():
 	print("For input", 'a', "Should return Invlaid input, please try again,", user_interface.commandPrompt(subscriber_ratings, 'a'))
 	print("For input", 'mcakmkds', "Should return Invlaid input, please try again,", user_interface.commandPrompt(subscriber_ratings, 'mcakmkds'))
 	print("For input", 'Quit', "Should return Invlaid input, please try again,", user_interface.commandPrompt(subscriber_ratings, 'Quit'))
-	
-	
 	#for error in test_menu_error:
 	#	print("For input", error, "Should return 'Invalid Input, please try again'", user_interface.commandPrompt(subscriber_ratings, error))
 	print("\nTesting checkName function")
@@ -308,7 +311,7 @@ def unit_test():
 	print("Should return\nTop 3 Most Popular Genres, with average scores:\nReggae: 6.7\nHip Hop: 6.5\nWorld: 6.4")
 	most_popular(average_rating(subscriber_ratings))
 	print("\nTesting Genre Recommendation...")
-	print("Should return 'Hip Hop,", recommend_genre(subscriber_ratings, 'Justin Trudeau', 'Test'))
+	print("Should return 'Classical',", recommend_genre(subscriber_ratings, 'Justin Trudeau', 'Test'))
 
 
 
