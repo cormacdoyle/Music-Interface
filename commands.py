@@ -1,3 +1,13 @@
+'''
+Assignment 3: The Sound of Music
+By: Cormac Doyle
+Student Number: 20152002
+
+This program takes a hard coded list of subscribers and music genres and randomly generates a set of music preferences.
+The program has the ability to check subscriber similarity, match subscribers, generate a list of average ratings, display
+the most popular genres, and recommend genres given a users name.
+'''
+
 from random import *
 from math import *
 import user_interface # import user interface module
@@ -216,7 +226,8 @@ def recommend_genre(subscriber_ratings, name, test = None):
 	recommended_list = []
 	recommended_list_values = []
 	most_similar = match_subscribers(subscriber_ratings, name)
-	if most_similar['Similarityval'] == 1: #checks to make sure subscribers are not the exact same because it would not be able to sugg
+	#checks to make sure subscribers are not the exact same because it would not be able to suggest genres
+	if most_similar['Similarityval'] == 1:
 		subscriber_ratings.pop(most_similar['Name'])
 		return recommend_genre(subscriber_ratings, name, test)
 	if most_similar['Similarityval'] < 1:
@@ -226,7 +237,7 @@ def recommend_genre(subscriber_ratings, name, test = None):
 				recommended_list.append(genre)
 	max_value = max(recommended_list_values)
 	index = recommended_list_values.index(max_value)
-	if test == None:
+	if test == None:#test parameter prints when not active and returns when active
 		print("Comparing your listening to others, we recommend you listen to", recommended_list[index])
 	else:
 		return recommended_list[index]
@@ -248,7 +259,7 @@ def checkName(subscriber_ratings, prompt, test = None):
 			search_name.append(subscriber)
 			return search_name[0]
 	if search_name == []:
-		if test == None:
+		if test == None:#test parameter prints when not active and returns when active
 			print("Hmmm, we don't have that name in our database, please try again.")
 			return checkName(subscriber_ratings, prompt)
 		else:
