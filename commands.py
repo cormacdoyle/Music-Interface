@@ -5,7 +5,7 @@ Student Number: 20152002
 
 This program takes a hard coded list of subscribers and music genres and randomly generates a set of music preferences.
 The program has the ability to check subscriber similarity, match subscribers, generate a list of average ratings, display
-the most popular genres, and recommend genres given a users name.
+the most popular genres, and recommend genres given a users name. commands.py is used to run the program.
 '''
 
 from random import *
@@ -195,7 +195,7 @@ def average_rating(subscriber_ratings):
 				values_dict[genre] = []
 				values_dict[genre].append(value)
 	for genre in values_dict:
-		averages_dict[genre] = round(statistics.mean(values_dict[genre]),1)
+		averages_dict[genre] = round(statistics.mean(values_dict[genre]),1) #rounds the values to 1 decimal place
 	return averages_dict
 
 '''
@@ -252,7 +252,7 @@ def checkName(subscriber_ratings, prompt, test = None):
 	if test == None:
 		subscriberName = input(prompt)
 	else:
-		subscriberName = test
+		subscriberName = test #test parametre stops user being prompted for input in test cases
 	search_name = []
 	for subscriber in subscriber_ratings:
 		if subscriber.lower() == subscriberName.lower():
@@ -267,7 +267,11 @@ def checkName(subscriber_ratings, prompt, test = None):
 
 '''
 This function tests every function in both commands.py and user_interface.py to ensure
-that the program never encounters an error
+that the program never encounters an error, it tests various different menu inputs to
+ensure menu error messages work properly, it also tests the checkName function which
+ensures user inputted names are in the database and in proper format, it also tests 
+functions using the subscriber_ratings test dictionary to make sure their outputs are
+correct.
 '''
 def unit_test():
 	subscriber_ratings = testSubscriberRatings()
@@ -285,8 +289,6 @@ def unit_test():
 	print("For input", 'a', "Should return Invlaid input, please try again,", user_interface.commandPrompt(subscriber_ratings, 'a'))
 	print("For input", 'mcakmkds', "Should return Invlaid input, please try again,", user_interface.commandPrompt(subscriber_ratings, 'mcakmkds'))
 	print("For input", 'Quit', "Should return Invlaid input, please try again,", user_interface.commandPrompt(subscriber_ratings, 'Quit'))
-	#for error in test_menu_error:
-	#	print("For input", error, "Should return 'Invalid Input, please try again'", user_interface.commandPrompt(subscriber_ratings, error))
 	print("\nTesting checkName function")
 	for error in test_name_error:
 		print("For input", error, "Should return 'Hmmm, we don't have that name in our database, please try again.'", checkName(subscriber_ratings, " ", error))
